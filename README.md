@@ -9,7 +9,8 @@
 
     There are other limits out there that you may want to add, depending on your
     setup.
- 4. Deploy your pod and persistent volume to your cluster:
+ 4. Update manifest.yaml with your specific settings.
+ 5. Deploy your pod and persistent volume to your cluster:
     `kubectl apply -f manifest.yaml`
 
 # Restoring Clusters
