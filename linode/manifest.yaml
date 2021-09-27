@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: validator-service
+spec:
+  type: NodePort
+  ports:
+  - port: 30333
+    targetPort: 30333
+    nodePort: 30333
+    protocol: TCP
+    name: validator
+  selector:
+    app: validator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: validator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: validator
+  template:
+    metadata:
+      labels:
+        app: validator
+    spec:
+      containers:
+      - name: syntropy-blockchain
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+        image: syntropynet/fn:latest
+        args:
+          - --name
+          - YOUR_NODENAME_HERE
+          - --bootnodes
+          - /dns/p2p.0.syntropynet.com/tcp/30333/p2p/12D3KooWLbHJuFbL45CCpufgoCCpkqsAphbdcEJnxGvx2FU7GQC4
+          - /dns/p2p.2.syntropynet.com/tcp/30333/p2p/12D3KooWKyuvFtFMcz8Es4CEfUsAnPdAo3oUBU8JC7APkAXJuNw7
+          - --telemetry-url
+          - 'wss://telemetry.syntropynet.com/submit/YOUR_NODENAME_HERE 0'
+        ports:
+        - containerPort: 30333
+          protocol: TCP
+        volumeMounts:
+          - mountPath: "/substrate/.local/share/substrate/chains/syntropy-testnet"
+            name: validator-data
+      restartPolicy: Always
+      initContainers:
+      - name: data-permission-fix # required hack to give volumes non-root ownership
+        image: busybox
+        command: ['sh', '-c', "cd /data; mkdir db keystore network; chown -R 1000:1000 /data || true"]
+        volumeMounts:
+        - name: validator-data
+          mountPath: /data
+      volumes:
+        - name: validator-data
+          persistentVolumeClaim:
+            claimName: validator-data
+---
+apiVersion: apps/v1
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: validator-data
+spec:
+  storageClassName: linode-block-storage-retain
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 214Gi # 200GBs with overhead

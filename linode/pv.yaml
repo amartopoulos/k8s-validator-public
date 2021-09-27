@@ -1,0 +1,19 @@
+# https://www.linode.com/community/questions/20185/mounting-an-existing-volume-to-lke
+# and
+# https://github.com/linode/linode-blockstorage-csi-driver#create-a-kubernetes-secret
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: validator-data
+spec:
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: linode-block-storage-retain
+  capacity:
+    storage: 214Gi
+  accessModes:
+    - ReadWriteOnce
+  csi:
+    driver: linodebs.csi.linode.com
+    fsType: ext4
+    volumeHandle: EXAMPLE-c714-11e8-bc0c-0a58ac14421e # {ID}-{Label}

@@ -1,0 +1,14 @@
+# just some sane, low limits to avoid possibility of internal DoS
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: resource-quotas
+spec:
+  hard:
+    pods: "2"
+    configmaps: "2"
+    persistentvolumeclaims: "2"
+    replicationcontrollers: "5"
+    secrets: "3"
+    services: "2"
+    services.loadbalancers: "2"
