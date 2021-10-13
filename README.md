@@ -1,6 +1,7 @@
 # Getting Started
 
- 1. Create your Kubernetes cluster in the UI and follow instructions
+ 1. Create your Kubernetes cluster in your cloud provider's UI and follow their
+    instructions to enable local administration via kubectl.
  2. Check that your cluster is available: `kubectl get nodes`
  3. To avoid certain internal DoS attacks, set cluster limits as appropriate
     in resource-quotas.yaml, then run:
