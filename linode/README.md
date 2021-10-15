@@ -1,10 +1,11 @@
 # Dashboard Installation
 
-After following the main README's instructions, you can get the Kubernetes dashboard up and running by installing first the metrics server, and then the dashboard itself:
+After following the main README's instructions, you can get the Kubernetes dashboard up and running by installing first the metrics server, and then the dashboard itself.  The cleanest method is via helm.  First, install the helm binary locally and then run:
 
-1. `kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml`
-2. Grab the URL for the latest dashboard from https://github.com/kubernetes/dashboard (see README), then kubectl apply it. 
-3. Run `kubectl proxy` and access via http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/workloads?namespace=default
+  helm repo add bitnami https://charts.bitnami.com/bitnami
+  helm install -f metrics-server-params.yaml metrics-server bitnami/metrics-server
+  helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+  helm install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard
 
 # Notes
 

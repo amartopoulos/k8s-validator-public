@@ -1,0 +1,6 @@
+# Linode doesn't implement properly signed certificates
+apiService:
+  create: true
+extraArgs:
+  kubelet-preferred-address-types: InternalIP
+  kubelet-insecure-tls: true
