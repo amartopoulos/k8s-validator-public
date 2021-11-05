@@ -21,9 +21,10 @@
 
 The script `common/handler.py` can be used as an AWS Lambda to monitor the
 availability of the validator port (30333). It's not fancy; it merely looks
-for an open port and publishes metrics to CloudWatch.  You'll need to set a
-cron scheduler as a trigger to run it every minute: cron(* * * * ? *).  The
-Lambda's role will need the following permissions:
+for an open port and publishes metrics to CloudWatch.  First, you'll need to
+set the correct IP address for your primary node ('IP_ADDRESS_HERE').  Then,
+you'll need to set a cron scheduler as a trigger to run it every minute: 
+cron(* * * * ? *).  The Lambda's role will need the following permissions:
 
  - logs:PutLogEvents
  - logs:DescribeLogStreams
@@ -62,9 +63,7 @@ the event of failover:
   `helm repo add descheduler https://kubernetes-sigs.github.io/descheduler/`
   `helm install descheduler --namespace kube-system --set schedule="* * * * *" descheduler/descheduler`
 
-The default install runs a cron check every 2 mins to see if anything needs
-to be evicted, but I prefer it to check every minute, so I updated the policy
-after installation:
+Aafter installation, set the policy for the descheduler:
 
   `kubectl apply -f descheduler.yaml`
 
