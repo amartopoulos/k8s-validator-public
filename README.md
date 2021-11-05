@@ -49,7 +49,8 @@ you already have an existing persistent volume that you need to attach to your
 pod, put the relevant details in pv.yaml and run `kubectl apply -f pv.yaml`
 BEFORE you apply manifest.yaml.  The CSI plugin will automatically match this
 volume with the PersistentVolumeClaim in manifest.yaml because they will match
-in details (size, storage class, etc.)
+in details (size, storage class, etc.)  NOTE: This will NOT work in Linode.
+See the README file in the linode directory.
 
 # DARP
 
