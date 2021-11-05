@@ -5,10 +5,11 @@ metadata:
   name: resource-quotas
 spec:
   hard:
-    pods: "2"
-    configmaps: "2"
+    pods: "4"
+    configmaps: "5"
     persistentvolumeclaims: "2"
-    replicationcontrollers: "5"
-    secrets: "3"
-    services: "2"
+    requests.storage: 500Gi
+    replicationcontrollers: "2"
+    secrets: "20"
+    services: "8"
     services.loadbalancers: "2"

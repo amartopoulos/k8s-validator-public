@@ -1,0 +1,54 @@
+# This manifest uses an anti-affinity rule to keep the DARP pod from being
+# scheduled on the same node as the validator one.  However, in the event of
+# a failover, if DARP is already running, it won't be automatically evicted.
+# The descheduler helm chart will need to be installed and a policy created to
+# enforce that (it will run every minute to check for policy violations).  See
+# README.
+
+apiVersion: scheduling.k8s.io/v1beta1
+kind: PriorityClass
+metadata:
+  name: negative-priority
+value: -1
+globalDefault: false
+description: "Priority class with a negative value so that pods will be evicted"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: darp
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate # kill old pods before spinning up new
+  selector:
+    matchLabels:
+      app: darp
+  template:
+    metadata:
+      labels:
+        app: darp
+    spec:
+      priorityClassName: negative-priority
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - validator
+            topologyKey: "kubernetes.io/hostname"
+      hostNetwork: true
+      containers:
+      - name: syntropy-darp
+        securityContext:
+          runAsUser: 65534
+          runAsGroup: 65534
+        image: syntropynet/darp:latest
+        ports:
+        - containerPort: 9835
+          hostPort: 9835  # unless you can change the nodePort range, this
+          protocol: UDP   # is the only way since Linode's LBs don't support UDP
+      restartPolicy: Always

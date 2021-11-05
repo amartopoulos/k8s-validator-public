@@ -1,0 +1,27 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-cron
+spec:
+  schedule: "0 6 * * *" # 6 AM UTC
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 120 # delete completed pods after 2 min
+      template:
+        spec:
+          containers:
+          - name: backup-cron
+            securityContext:
+              runAsUser: 65534 # nobody
+              runAsGroup: 65534
+            image: martopoulos/linode-manage-volumes:latest
+            env:
+            - name: LINODE_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: linode-api
+                  key: token
+          restartPolicy: Never
+          imagePullSecrets:
+          - name: dockercredentials

@@ -1,0 +1,26 @@
+This script will clone backups and delete old ones.  Follow the steps below
+to build:
+
+If you use a private Docker repo to host your images, use 'sudo docker login'
+to save your credentials to /root/.docker/config.json, then temporarily copy
+that file to your home directory and store it as a new secret in your cluster:
+
+    kubectl create secret generic dockercredentials \
+        --from-file=.dockerconfigjson=/home/andrew/config.json \
+        --type=kubernetes.io/dockerconfigjson
+
+Once stored, delete the copy of the credentials and continue below.
+
+1. Create a linode API key and save it as a key value pair (key: token) inside
+   a new secret named linode-api (which can have multiple key value pairs):
+
+   kubectl create secret generic linode-api --from-literal=token=XXXXXXXXXXX
+
+2. Build the docker image and push it to a public repo (MAKE SURE THERE'S
+   NOTHING SENSITIVE IN THE IMAGE): 
+
+     sudo docker build -t martopoulos/linode-manage-volumes .
+     sudo docker push martopoulos/linode-manage-volumes:latest
+
+3. Deploy to your kubernetes cluster as a cron job:
+    kubectl apply -f backup-cron.yaml

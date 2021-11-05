@@ -1,3 +1,5 @@
+# This is for helm, not kubectl
+
 # Linode doesn't implement properly signed certificates
 apiService:
   create: true
