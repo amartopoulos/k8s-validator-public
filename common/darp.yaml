@@ -5,7 +5,7 @@
 # enforce that (it will run every minute to check for policy violations).  See
 # README.
 
-apiVersion: scheduling.k8s.io/v1beta1
+apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: negative-priority
